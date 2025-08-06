@@ -1,7 +1,7 @@
 API Development Plan
 ====================
 
-Phase 1: Foundation and Data Migration
+Phase 1: Core Tbles and Core Data Migration
 -------------------------------------
 
 This phase focuses on establishing the foundational APIs for the core entities and migrating existing data into the system. Some tasks are complete, while others remain pending.
