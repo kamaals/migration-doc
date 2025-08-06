@@ -537,6 +537,84 @@ This phase builds on Phase 1 by enhancing the APIs, adding new features, integra
       }
       ```
     - **Relationship**: A many-to-many relationship between `organization` and `platform` will be implemented via a junction table (e.g., `organization_platform`), with fields `organization_id` (UUID referencing `organization`) and `platform_id` (UUID referencing `platform`).
+    - **return**:
+       - **Brief**: Represents return requests associated with orders, tracking the return process, quantities, and statuses for inventory and customer service purposes. Data is initially extracted from SharePoint and linked to `order` and `organization`.
+       - **Brief**:
+         ```json
+          {
+            "organization_id": {
+              "type": "uuid",
+              "required": true,
+              "description": "The UUID of the associated organization, linking the return to a specific business entity. Must reference a valid `organization` record."
+            },
+            "order_id": {
+              "type": "uuid",
+              "required": true,
+              "description": "The UUID of the associated order, linking the return to a specific order. Must reference a valid `order` record."
+            },
+            "return_number": {
+              "type": "string",
+              "required": true,
+              "description": "A unique identifier for the return request, used for tracking and reference across systems."
+            },
+            "return_type": {
+              "type": "enum",
+              "values": ["full_refunded", "partial_refunded", "exchange", "replacement", "other"], // Placeholder: please provide specific enum values
+              "required": true,
+              "description": "The type of return request (e.g., full refund, partial refund, exchange), used to categorize the return process."
+            },
+            "document_status": {
+              "type": "enum",
+              "values": ["pending", "approved", "rejected", "processed", "cancelled"], // Placeholder: please provide specific enum values
+              "required": true,
+              "description": "The status of the return documentation, indicating the progress of return approval or processing."
+            },
+            "awb": {
+              "type": "string",
+              "required": false,
+              "description": "The Air Waybill (AWB) number for the return shipment, used for tracking logistics."
+            },
+            "total_quantity": {
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "description": "The total number of items included in the return request, used for inventory tracking."
+            },
+            "putaway_quantity": {
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "description": "The number of returned items processed and placed back into inventory, used for warehouse management."
+            },
+            "putaway_status_id": {
+              "type": "uuid",
+              "required": false,
+              "description": "The UUID of the associated putaway status record, linking to a specific inventory status (e.g., in a putaway status table). Must reference a valid record if provided."
+            },
+            "processed_by": {
+              "type": "uuid",
+              "required": false,
+              "description": "The UUID of the user or system processing the return, used for accountability and tracking."
+            },
+            "notes": {
+              "type": "string",
+              "required": false,
+              "description": "Additional comments or instructions related to the return, provided by the customer or organization for context or special handling."
+            },
+            "status_type": {
+              "type": "enum",
+              "values": ["initiated", "in_progress", "completed", "cancelled"], // Placeholder: please provide specific enum values
+              "required": true,
+              "description": "The overall status of the return process, indicating its current stage in the return lifecycle."
+            }
+          }
+         ```
+       - **Note**: The `return_type`, `document_status`, and `status_type` fields are defined as enums with placeholder values. Please provide the specific enum values for accurate implementation.
+
+
+
+
+
 - **Feedback Review**:
   - Collect feedback from staging environment testing, including issues with `organization` (e.g., `slug` generation), `customer` (e.g., `phone` logic, `email` validation, `location` format), `product` (e.g., `barcode` or `sku` uniqueness, `dimensions` parsing), `service` (e.g., `slug` generation, `parentId` relationships), `warehouse` (e.g., `slug` generation, `location` format, `metaData` parsing), `slot` (e.g., `slug` generation, `type` or `binType` validation, `parentId` relationships, bin address generation), `order` (e.g., `order_number` uniqueness, `organization_id` validation, `customer_email` format, `status` handling), `items` (e.g., `order_id` and `product_id` validation, `quantity` and pricing accuracy), and `platform` (e.g., `api_key` security, `is_active` handling, many-to-many relationship with `organization`).
 - **API Refinement**:
